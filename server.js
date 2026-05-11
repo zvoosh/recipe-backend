@@ -11,14 +11,21 @@ const db = admin.firestore();
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 const PORT = process.env.PORT;
-app.use(express.json());
 
-var corsOptions = {
-  origin: ["http://localhost:5173", "https://recipes.dusanprogram.eu"],
-  optionsSuccessStatus: 200,
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "https://recipes.dusanprogram.eu"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions));
+
+app.options("*", cors(corsOptions));
+
+app.use(express.json());
 
 const imagekit = new ImageKit({
   publicKey: process.env.IMAGEKITPUBLIC,
