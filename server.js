@@ -13,7 +13,13 @@ const upload = multer({ storage: multer.memoryStorage() });
 const PORT = process.env.PORT;
 app.use(express.json());
 
-app.use(cors());
+var corsOptions = {
+  origin: ["http://localhost:5173", "https://recipes.dusanprogram.eu"],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+
 const imagekit = new ImageKit({
   publicKey: process.env.IMAGEKITPUBLIC,
   privateKey: process.env.IMAGEKITPRIVATE,
@@ -96,7 +102,7 @@ app.post("/api/recipe", upload.single("image"), async (req, res) => {
   const parsedIngredients = JSON.parse(ingredients);
   const parsedInstructions = JSON.parse(instructions);
 
-  console.log("parsed", parsedIngredients, parsedInstructions)
+  console.log("parsed", parsedIngredients, parsedInstructions);
 
   try {
     const uploadResponse = await imagekit.upload({
@@ -143,8 +149,7 @@ app.get("/api/recipe/:id", async (req, res) => {
 
   try {
     const doc = await db.collection("recipes").doc(id).get();
-    if (!doc.exists)
-      return res.status(404).json({ error: "Recipe not found" });
+    if (!doc.exists) return res.status(404).json({ error: "Recipe not found" });
 
     res.status(200).json(doc.data());
   } catch (err) {
