@@ -12,17 +12,18 @@ const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 const PORT = process.env.PORT;
 
-app.use(cors({
+const corsOptions = {
   origin: [
     "http://localhost:5173",
     "https://recipes.dusanprogram.eu"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-}));
+  credentials: true
+};
 
-app.options("*", cors());
-
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 const imagekit = new ImageKit({
@@ -171,10 +172,6 @@ app.delete("/api/recipe/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
 });
 
 export default app;
