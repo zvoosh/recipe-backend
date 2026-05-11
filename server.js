@@ -11,27 +11,10 @@ const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 const PORT = process.env.PORT;
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://recipes.dusanprogram.eu"
-];
-
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204);
-  }
-
-  next();
+app.options("*", (req, res) => {
+  res.sendStatus(204);
 });
+
 app.use(express.json());
 
 const imagekit = new ImageKit({
@@ -182,4 +165,4 @@ app.delete("/api/recipe/:id", async (req, res) => {
   }
 });
 
-export default app;
+module.exports = app;
