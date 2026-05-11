@@ -1,15 +1,15 @@
 require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
-const { v4: uuidv4 } = require("uuid");
 const admin = require("./firebase");
 const bcrypt = require("bcrypt");
 const ImageKit = require("imagekit");
-
+const { randomUUID: uuidv4 } = require("crypto");
 const db = admin.firestore();
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 const PORT = process.env.PORT;
+
 
 app.options("*", (req, res) => {
   res.sendStatus(204);
