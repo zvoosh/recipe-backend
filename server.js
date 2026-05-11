@@ -14,7 +14,6 @@ const PORT = process.env.PORT;
 app.use(express.json());
 
 app.use(cors());
-console.log("Public Key:", process.env.IMAGEKITPUBLIC);
 const imagekit = new ImageKit({
   publicKey: process.env.IMAGEKITPUBLIC,
   privateKey: process.env.IMAGEKITPRIVATE,
@@ -167,3 +166,5 @@ app.delete("/api/recipe/:id", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+export default app;
