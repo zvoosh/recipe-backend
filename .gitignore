@@ -1,6 +1,6 @@
 .env
 *env
 
-firebase-adminsdk.json
+recipes.json
 
 node_modules
