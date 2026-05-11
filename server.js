@@ -5,14 +5,30 @@ const admin = require("./firebase");
 const bcrypt = require("bcrypt");
 const ImageKit = require("imagekit");
 const { randomUUID: uuidv4 } = require("crypto");
+
 const db = admin.firestore();
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
-const PORT = process.env.PORT;
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://recipes.dusanprogram.eu",
+];
 
+// CORS middleware must be first
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
+// Preflight — after CORS headers are set
 app.options("*", (req, res) => {
-  res.sendStatus(204);
+  res.sendStatus(200);
 });
 
 app.use(express.json());
@@ -66,7 +82,6 @@ app.post("/api/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
 
     const userData = snapshot.docs[0].data();
-
     const isMatch = await bcrypt.compare(loginSecret, userData.password);
 
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
@@ -96,10 +111,9 @@ app.post("/api/recipe", upload.single("image"), async (req, res) => {
     ingredients,
     instructions,
   } = req.body;
+
   const parsedIngredients = JSON.parse(ingredients);
   const parsedInstructions = JSON.parse(instructions);
-
-  console.log("parsed", parsedIngredients, parsedInstructions);
 
   try {
     const uploadResponse = await imagekit.upload({
