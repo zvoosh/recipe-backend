@@ -15,7 +15,6 @@ const allowedOrigins = [
   "https://recipes.dusanprogram.eu",
 ];
 
-// CORS middleware must be first
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
@@ -26,8 +25,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Preflight — after CORS headers are set
-app.options("*", (req, res) => {
+app.options("/{*any}", (req, res) => {
   res.sendStatus(200);
 });
 
